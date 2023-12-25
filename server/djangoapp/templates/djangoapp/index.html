@@ -1,65 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Dealership Review</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <link href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css" rel="stylesheet">
+    <link
+      href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css"
+      rel="stylesheet"
+    />
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Dealership Review</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+  </head>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="about/">About Us</a></li>
-                <li class="nav-item"><a class="nav-link" href="contact/">Contact Us</a></li>
-            </ul>
-            <ul class="navbar-nav">
-                {% if not user.is_authenticated %}
-                <li class="nav-item">
-                    <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
-                        {% csrf_token %}
-                        <input class="form-control mr-sm-2" type="text" placeholder="Username" name="username">
-                        <input class="form-control mr-sm-2" type="password" placeholder="Password" name="password">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Sign in</button>
-                        
-                    </form>
-                    <a href="signup/">
-                        <button class="btn btn-outline-danger my-2 my-sm-0" >Sign up</button>
+  <body>
+    <!-- Remove this line the first time you edit this file -->
+    This is the index page of your Django app!
+    <!--Add a nav bar here -->
 
-                    </a>
-                    
-                </li>
-                {% endif %}
-                
-                
-                </li>
-            </ul>
-
+    <nav class="navbar navbar-light bg-light">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href={% url 'djangoapp:index' %}>Best Dealer</a>
         </div>
+        <ul class="nav navbar-nav navbar-right">
+          {% if user.is_authenticated %}
+          <li>
+            <a class="btn btn-link" href="about">About</a>
+            <a class="btn btn-link" href="contact">Contact</a>
+
+            <a class="btn btn-link" href="logout">Logout</a>
+          </li>
+          {% else %}
+          <li>
+            <form
+              action="{% url 'djangoapp:login'%}"
+              class="form-inline"
+              method="post"
+            >
+              {% csrf_token %}
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Username"
+                  name="username"
+                />
+                <input
+                  type="password"
+                  class="form-control"
+                  placeholder="Password"
+                  name="psw"
+                />
+                <button class="btn btn-primary" type="submit">Login</button>
+                <a class="btn btn-link" href="{% url 'djangoapp:registration'%}"
+                  >Sign Up</a
+                >
+              </div>
+            </form>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
     </nav>
-    <div class="container mt-3"> <!-- Use a Bootstrap container for content -->
-        <div class="row justify-content-end"> <!-- Align content to the right within a row -->
-            <div class="col-auto">
-                {% if user.is_authenticated %}
-                <p class="d-inline mr-3">Welcome {{ user.username }}!</p>
-                <a href="{% url 'djangoapp:logout' %}" class="btn btn-outline-danger">Sign Out</a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    
-
-    
-</body>
+    <script>
+      $(function () {
+        $('#table').bootstrapTable();
+      });
+    </script>
+    <table class="table" id="table" data-filter-control="true">
+      <thead>
+        <tr>
+          <th data-field="id">ID</th>
+          <th data-field="name">Dealer Name</th>
+          <th data-field="city">City</th>
+          <th data-field="address">Adress</th>
+          <th data-field="zip">Zip</th>
+          <th data-field="state" data-filter-control="select">State</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for dealer in dealership_list %}
+        <tr>
+          <td>{{dealer.id}}</td>
+          <td>
+            <a href="{% url 'djangoapp:dealer_details' dealer.id %}"
+              >{{dealer.full_name}}</a
+            >
+          </td>
+          <td>{{dealer.city}}</td>
+          <td>{{dealer.address}}</td>
+          <td>{{dealer.zip}}</td>
+          <td>{{dealer.st}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
 </html>
